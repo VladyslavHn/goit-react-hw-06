@@ -1,6 +1,9 @@
 import { Form, Formik, Field, ErrorMessage } from "formik"
 import * as Yup from "yup";
 import css from './contactForm.module.css';
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 const initialValues = {
     name: "",
@@ -12,10 +15,17 @@ const initialValues = {
     number: Yup.string().matches(/^\d+$/, 'Number must contain only digits').min(3, 'Too short!').max(50, 'Too long!').required('Number is required'),
   });
 
-const ContactForm = ({addContact}) => {
+const ContactForm = () => {
 
-  const handleSubmit = (values, {resetForm}) => {
-    addContact(values);
+  const dispatch = useDispatch();
+
+  const handleSubmit = (values, { resetForm }) => {
+    const finalContact = {
+      name: values.name,
+      number: values.number,
+      id: nanoid(),
+    }
+    dispatch(addContact(finalContact));
     resetForm();
   }
 
